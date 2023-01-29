@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using static LastStand.UI;
+using static LastStand.Utils;
 
 namespace LastStand
 {
@@ -44,21 +46,21 @@ namespace LastStand
 
     public sealed class LastStand : Script
     {
-        private readonly Vector3 StartLocation = new Vector3(-920, -2748, 13);
-        private readonly Vector3 SpawnLocation = new Vector3(-1225, -3294, 13);
-        private readonly Vector3 TargetLocation = new Vector3(-1265, -3360, 13);
-        private readonly Vector3 SniperNestLocation = new Vector3(-1265, -3360, 35);
+        public static readonly Vector3 StartLocation = new Vector3(-920, -2748, 13);
+        public static readonly Vector3 SpawnLocation = new Vector3(-1225, -3294, 13);
+        public static readonly Vector3 TargetLocation = new Vector3(-1265, -3360, 13);
+        public static readonly Vector3 SniperNestLocation = new Vector3(-1265, -3360, 35);
 
         private DefenseState State { get; set; } = DefenseState.FREEROAM;
 
-        private readonly List<Ped> PedPool = new List<Ped>();
-        private readonly List<Blip> BlipPool = new List<Blip>();
-        private readonly List<Vehicle> VehiclePool = new List<Vehicle>();
+        public static readonly List<Ped> PedPool = new List<Ped>();
+        public static readonly List<Blip> BlipPool = new List<Blip>();
+        public static readonly List<Vehicle> VehiclePool = new List<Vehicle>();
 
         private int Wave = 0;
         private PedGroup Attackers;
-        private Blip StartBlip;
-        private Blip TargetBlip;
+        public static Blip StartBlip;
+        public static Blip TargetBlip;
 
         private readonly int FadeDuration = 1500;
 
@@ -152,49 +154,6 @@ namespace LastStand
 
         }
 
-        void CreateStartBlip()
-        {
-            if (StartBlip == null)
-            {
-                StartBlip = World.CreateBlip(StartLocation);
-                StartBlip.Sprite = BlipSprite.Deathmatch;
-                StartBlip.Name = "Defense";
-                StartBlip.Color = BlipColor.Blue;
-                BlipPool.Add(StartBlip);
-            }
-        }
-
-        void RemoveStartBlip()
-        {
-            if (StartBlip != null)
-            {
-                BlipPool.Remove(StartBlip);
-                StartBlip.Delete();
-                StartBlip = null;
-            }
-        }
-
-        void CreateTargetBlip()
-        {
-            if (TargetBlip == null)
-            {
-                TargetBlip = World.CreateBlip(TargetLocation);
-                //TargetBlip.Sprite = BlipSprite.Deathmatch;
-                TargetBlip.Name = "Target";
-                TargetBlip.Color = BlipColor.Yellow;
-                BlipPool.Add(TargetBlip);
-            }
-        }
-
-        void RemoveTargetBlip()
-        {
-            if (TargetBlip != null)
-            {
-                BlipPool.Remove(TargetBlip);
-                TargetBlip.Delete();
-                TargetBlip = null;
-            }
-        }
 
         void SetupPlayer()
         {
@@ -228,22 +187,6 @@ namespace LastStand
             Wave = 0;
         }
 
-        void RemoveDeadBlips()
-        {
-            foreach (Ped p in PedPool)
-            {
-                Blip b = p.AttachedBlip;
-
-                if (b != null)
-                {
-                    if (p.IsDead)
-                    {
-                        BlipPool.Remove(b);
-                        b.Delete();
-                    }
-                }
-            }
-        }
 
         void SpawnAttackers()
         {
@@ -265,19 +208,6 @@ namespace LastStand
             Attackers.Formation = Formation.Loose;
         }
 
-        void DeletePedAndBlip(Ped p)
-        {
-            Blip b = p.AttachedBlip;
-            if (b != null)
-            {
-                BlipPool.Remove(b);
-                b.Delete();
-            }
-
-            p.LeaveGroup();
-            PedPool.Remove(p);
-            p.Delete();
-        }
 
         void DeleteAttackers()
         {
@@ -286,9 +216,6 @@ namespace LastStand
                 Ped p = PedPool[i];
                 DeletePedAndBlip(p);
             }
-
-            //Attackers.Delete();
-            //Attackers = null;
         }
 
         bool IsGroupDead(PedGroup pedGroup)
@@ -314,23 +241,6 @@ namespace LastStand
             }
 
             return false;
-        }
-
-        void ClearPool(List<PoolObject> pool)
-        {
-            for (int i = pool.Count; i > 0; i--)
-            {
-                var item = pool[i];
-                item.Delete();
-
-                var e = item as Entity;
-                if (e != null)
-                {
-                    Blip b = e.AttachedBlip;
-                    BlipPool.Remove(b);
-                    b.Delete();
-                }
-            }
         }
 
         void EndWave(bool didWin)
