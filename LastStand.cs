@@ -4,9 +4,9 @@ using GTA.UI;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using static Utils.Abilities;
-using static Utils.Entities;
-using static Utils.UI;
+using static LastStand.Abilities;
+using static LastStand.Entities;
+using static LastStand.UI;
 
 
 
@@ -64,14 +64,10 @@ namespace LastStand
     }
 
 
+    // ReSharper disable once ClassNeverInstantiated.Global
     public sealed class LastStand : Script
     {
-        //public static readonly Vector3 StartLocation = new Vector3(-920, -2748, 13);
-        //public static readonly Vector3 SpawnLocation = new Vector3(-1225, -3294, 13);
-        //public static readonly Vector3 TargetLocation = new Vector3(-1265, -3360, 13);
-        //public static readonly Vector3 SniperNestLocation = new Vector3(-1265, -3360, 35);
-
-        public static DefenseState State { get; set; } = DefenseState.FREEROAM;
+        public static DefenseState State { get; set; } = DefenseState.Freeroam;
 
         //static DefenseZone VespucciDefense = new DefenseZone(
         //    new Vector3(-1447, -778, 22.5f),
@@ -119,13 +115,13 @@ namespace LastStand
         private readonly int FadeDuration = 1500;
 
         public static Vector3? StrikePosition;
-        public static int strikeTargetTime;
+        public static int StrikeTargetTime;
 
         public enum DefenseState
         {
-            FREEROAM,
-            DEFENDING,
-            DEFENSE_ENDED
+            Freeroam,
+            Defending,
+            DefenseEnded
         }
 
         void Setup()
@@ -164,32 +160,28 @@ namespace LastStand
 
             switch (State)
             {
-                case DefenseState.FREEROAM:
+                case DefenseState.Freeroam:
 
-                    foreach (var DefenseZone in DefenseZones)
+                    foreach (var defenseZone in DefenseZones)
                     {
-                        if (World.GetDistance(Game.Player.Character.Position, DefenseZone.StartLocation) < 50)
+                        if (World.GetDistance(Game.Player.Character.Position, defenseZone.StartLocation) < 50)
                         {
-                            World.DrawMarker(MarkerType.VerticalCylinder, DefenseZone.StartLocation, Vector3.Zero, Vector3.Zero, Ones * 3, Color.Yellow);
+                            World.DrawMarker(MarkerType.VerticalCylinder, defenseZone.StartLocation, Vector3.Zero, Vector3.Zero, Ones * 3, Color.Yellow);
                         }
 
-                        if (World.GetDistance(Game.Player.Character.Position, DefenseZone.StartLocation) < 5)
-                        {
-                            GTA.UI.Screen.ShowHelpText("Press ~INPUT_CONTEXT~ to start the defense.");
+                        if (!(World.GetDistance(Game.Player.Character.Position, defenseZone.StartLocation) < 5))
+                            continue;
+                        GTA.UI.Screen.ShowHelpText("Press ~INPUT_CONTEXT~ to start the defense.");
 
-                            if (Game.IsControlJustPressed(GTA.Control.Context))
-                            {
-                                CurrentZone = DefenseZone;
-                                SetupPlayer();
-                            }
-                        }
+                        if (!Game.IsControlJustPressed(GTA.Control.Context)) continue;
+                        
+                        CurrentZone = defenseZone;
+                        SetupPlayer();
                     }
 
-
-
-
                     break;
-                case DefenseState.DEFENDING:
+
+                case DefenseState.Defending:
                     // TODO: Hide start blip
                     DefenseLoop();
 
@@ -201,13 +193,13 @@ namespace LastStand
 
                         if (Game.IsControlJustPressed(GTA.Control.Detonate))
                         {
-                            RaycastResult rr = World.GetCrosshairCoordinates();
+                            var rr = World.GetCrosshairCoordinates();
 
                             // By setting these vars, we schedule a strike
                             if (rr.DidHit)
                             {
                                 StrikePosition = rr.HitPosition + Vector3.WorldUp * 3;
-                                strikeTargetTime = Game.GameTime + 3 * 1000;
+                                StrikeTargetTime = Game.GameTime + 3 * 1000;
                             }
                             else
                             {
@@ -217,7 +209,7 @@ namespace LastStand
                     }
 
                     break;
-                case DefenseState.DEFENSE_ENDED:
+                case DefenseState.DefenseEnded:
 
                     ResetPlayer();
                     RemoveTargetBlip();
@@ -236,7 +228,7 @@ namespace LastStand
             {
                 // TODO: Show big text
                 //GTA.World.
-                State = DefenseState.DEFENSE_ENDED;
+                State = DefenseState.DefenseEnded;
                 return;
             }
 
@@ -248,7 +240,7 @@ namespace LastStand
             Wait(2500);
 
             SpawnAttackers(CurrentZone);
-            State = DefenseState.DEFENDING;
+            State = DefenseState.Defending;
         }
 
 
@@ -270,7 +262,7 @@ namespace LastStand
             Wait(FadeDuration);
             GTA.UI.Screen.FadeIn(FadeDuration);
 
-            State = DefenseState.DEFENDING;
+            State = DefenseState.Defending;
             Wave = 0;
 
             NextWave();
@@ -285,7 +277,7 @@ namespace LastStand
             Wait(FadeDuration);
             GTA.UI.Screen.FadeIn(FadeDuration);
 
-            State = DefenseState.FREEROAM;
+            State = DefenseState.Freeroam;
             Wave = 0;
             CurrentZone = null;
 
@@ -308,7 +300,7 @@ namespace LastStand
             }
             else
             {
-                State = DefenseState.DEFENSE_ENDED;
+                State = DefenseState.DefenseEnded;
             }
         }
 

@@ -15,11 +15,11 @@ namespace LastStand
             Rotation = rotation;
         }
 
-        public void Deconstruct(out string Name, out Vector3 Position, out Vector3 Rotation)
+        public void Deconstruct(out string name, out Vector3 position, out Vector3 rotation)
         {
-            Name = this.Name;
-            Position = this.Position;
-            Rotation = this.Rotation;
+            name = this.Name;
+            position = this.Position;
+            rotation = this.Rotation;
         }
     }
 }

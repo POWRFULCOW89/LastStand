@@ -31,8 +31,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ScriptHookVDotNet3">
-      <HintPath>..\..\..\..\..\..\Games\GTAV\ScriptHookVDotNet3.dll</HintPath>
+    <Reference Include="LemonUI.SHVDN3, Version=1.9.1.0, Culture=neutral, processorArchitecture=Amd64">
+      <HintPath>packages\LemonUI.SHVDN3.1.9.1\lib\net48\LemonUI.SHVDN3.dll</HintPath>
+    </Reference>
+    <Reference Include="ScriptHookVDotNet3, Version=3.6.0.0, Culture=neutral, processorArchitecture=Amd64">
+      <HintPath>packages\ScriptHookVDotNet3.3.6.0\lib\net48\ScriptHookVDotNet3.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -50,6 +53,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropLocation.cs" />
     <Compile Include="Utils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
