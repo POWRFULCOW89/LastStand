@@ -17,3 +17,10 @@ Make your way to the *Defense* blip to start the tower defense. Endure five wave
 ### TODO
 
 - Modular JSON format
+
+### Resources
+
+- [Natives](http://www.dev-c.com/nativedb/)
+- [Hashes](https://gtahash.ru/?s=finish)
+- [Frontend sound list](https://wiki.gtanet.work/index.php?title=FrontEndSoundlist)
+- [SHVDN docs](https://nitanmarcel.github.io/shvdn-docs.github.io/index.html)
